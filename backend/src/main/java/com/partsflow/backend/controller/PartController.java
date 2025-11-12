@@ -28,6 +28,7 @@ public class PartController {
     @GetMapping("/{id}")
     public ResponseEntity<Part> getById(@PathVariable Long id) {
         Part part = partRepository.findById(id).orElse(null);
+        
         if (part == null) {
             return ResponseEntity.notFound().build();
         }
@@ -40,6 +41,7 @@ public class PartController {
         if (incoming.getReference() == null || incoming.getName() == null) {
             return ResponseEntity.badRequest().build();
         }
+        
         Part saved = partRepository.save(incoming);
 
         URI location = URI.create("/api/parts/" + saved.getId());
@@ -69,6 +71,7 @@ public class PartController {
         if (!partRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
+
         partRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
