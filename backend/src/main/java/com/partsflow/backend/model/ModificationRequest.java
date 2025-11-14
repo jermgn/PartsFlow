@@ -1,7 +1,10 @@
 package com.partsflow.backend.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
@@ -16,7 +19,7 @@ public class ModificationRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @NotBlank
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "part_id" , nullable = false)
     private Part part;
@@ -33,6 +36,13 @@ public class ModificationRequest {
     @Builder.Default
     private RequestStatus status = RequestStatus.PENDING;
 
+    private LocalDateTime createdAt;
+
     @Column(length = 500)
     private String comment;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 }
