@@ -1,30 +1,41 @@
 package com.partsflow.backend.controller;
 
-import com.partsflow.backend.model.ModificationRequest;
-import com.partsflow.backend.model.Part;
-import com.partsflow.backend.model.PartStatus;
-import com.partsflow.backend.model.RequestStatus;
-import com.partsflow.backend.repository.ModificationRequestRepository;
-import com.partsflow.backend.repository.PartRepository;
+import com.partsflow.backend.model.*;
+import com.partsflow.backend.repository.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 @RestController
 @RequestMapping("/api/requests")
 @CrossOrigin(origins = "*")
-
 public class ModificationRequestController {
-    
+
     private final ModificationRequestRepository modificationRequestRepository;
     private final PartRepository partRepository;
+    private final RequesterRepository requesterRepository;
+    private final WorkshopRepository workshopRepository;
 
-    public ModificationRequestController(ModificationRequestRepository modificationRequestRepository, PartRepository partRepository) {
+    public ModificationRequestController(
+            ModificationRequestRepository modificationRequestRepository,
+            PartRepository partRepository,
+            RequesterRepository requesterRepository,
+            WorkshopRepository workshopRepository
+    ) {
         this.modificationRequestRepository = modificationRequestRepository;
         this.partRepository = partRepository;
+        this.requesterRepository = requesterRepository;
+        this.workshopRepository = workshopRepository;
+    }
+
+    public record ModificationRequestCreateDTO(
+            Long partId,
+            Long requesterId,
+            Long workshopId,
+            String comment
+    ) {
     }
 
     @GetMapping
@@ -34,40 +45,66 @@ public class ModificationRequestController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ModificationRequest> getById(@PathVariable Long id) {
-        ModificationRequest request = modificationRequestRepository.findById(id).orElse(null);
-
-        if (request == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(request);
+        return modificationRequestRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<ModificationRequest> create(@RequestBody ModificationRequest incoming) {
-        if (incoming.getPart() == null || incoming.getRequester() == null) {
-            return ResponseEntity.badRequest().build();
+    public ResponseEntity<?> create(@RequestBody ModificationRequestCreateDTO dto) {
+
+        Part part = partRepository.findById(dto.partId())
+                .orElse(null);
+
+        if (part == null) {
+            return ResponseEntity.badRequest().body("Part not found");
         }
 
-        ModificationRequest saved = modificationRequestRepository.save(incoming);
+        Requester requester = requesterRepository.findById(dto.requesterId())
+                .orElse(null);
 
-        URI location = URI.create("/api/requests/" + saved.getId());
-        return ResponseEntity.created(location).body(saved);
+        if (requester == null) {
+            return ResponseEntity.badRequest().body("Requester not found");
+        }
+
+        Workshop workshop = workshopRepository.findById(dto.workshopId())
+                .orElse(null);
+
+        if (workshop == null) {
+            return ResponseEntity.badRequest().body("Workshop not found");
+        }
+
+        ModificationRequest request = ModificationRequest.builder()
+                .part(part)
+                .requester(requester)
+                .workshop(workshop)
+                .comment(dto.comment())
+                .status(RequestStatus.PENDING)
+                .build();
+
+        ModificationRequest saved = modificationRequestRepository.save(request);
+
+        return ResponseEntity.created(URI.create("/api/requests/" + saved.getId()))
+                .body(saved);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ModificationRequest> update(@PathVariable Long id, @RequestBody ModificationRequest updateRequest) {
-        ModificationRequest existing = modificationRequestRepository.findById(id).orElse(null);
+    public ResponseEntity<?> update(
+            @PathVariable Long id,
+            @RequestBody ModificationRequest update
+    ) {
+
+        ModificationRequest existing = modificationRequestRepository.findById(id)
+                .orElse(null);
 
         if (existing == null) {
             return ResponseEntity.notFound().build();
         }
 
-        existing.setStatus(updateRequest.getStatus());
-        existing.setComment(updateRequest.getComment());
-        existing.setWorkshop(updateRequest.getWorkshop());
+        existing.setComment(update.getComment());
+        existing.setStatus(update.getStatus());
 
-        if (updateRequest.getStatus() == RequestStatus.VALIDATED) {
+        if (update.getStatus() == RequestStatus.VALIDATED) {
             Part part = existing.getPart();
             part.setStatus(PartStatus.REPLACED);
             partRepository.save(part);
@@ -78,7 +115,7 @@ public class ModificationRequestController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         if (!modificationRequestRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
@@ -92,8 +129,8 @@ public class ModificationRequestController {
         return modificationRequestRepository.findByStatus(status);
     }
 
-    @GetMapping("workshop/{workshop}")
-    public List<ModificationRequest> getByWorkshop(@PathVariable String workshop) {
-        return modificationRequestRepository.findByWorkshop(workshop);
+    @GetMapping("/workshop/{id}")
+    public List<ModificationRequest> getByWorkshop(@PathVariable Long id) {
+        return modificationRequestRepository.findByWorkshopId(id);
     }
 }

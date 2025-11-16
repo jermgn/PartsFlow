@@ -11,7 +11,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/parts")
 @CrossOrigin(origins = "*")
-
 public class PartController {
 
     private final PartRepository partRepository;
@@ -27,43 +26,44 @@ public class PartController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Part> getById(@PathVariable Long id) {
-        Part part = partRepository.findById(id).orElse(null);
-        
-        if (part == null) {
-            return ResponseEntity.notFound().build();
-        }
+        return partRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 
-        return ResponseEntity.ok(part);
+    @GetMapping("/reference/{reference}")
+    public ResponseEntity<Part> getByReference(@PathVariable String reference) {
+        return partRepository.findByReference(reference)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Part> create(@RequestBody Part incoming) {
-        if (incoming.getReference() == null || incoming.getName() == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        
-        Part saved = partRepository.save(incoming);
+    public ResponseEntity<?> create(@RequestBody Part incoming) {
 
+        if (partRepository.existsByReference(incoming.getReference())) {
+            return ResponseEntity.badRequest().body("Reference already exists");
+        }
+
+        Part saved = partRepository.save(incoming);
         URI location = URI.create("/api/parts/" + saved.getId());
         return ResponseEntity.created(location).body(saved);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Part> update(@PathVariable Long id, @RequestBody Part updatedPart) {
-        Part existing = partRepository.findById(id).orElse(null);
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Part update) {
+        return partRepository.findById(id)
+                .map(existing -> {
 
-        if (existing == null) {
-            return ResponseEntity.notFound().build();
-        }
+                    existing.setName(update.getName());
+                    existing.setSupplier(update.getSupplier());
+                    existing.setVersion(update.getVersion());
+                    existing.setStatus(update.getStatus());
 
-        existing.setReference(updatedPart.getReference());
-        existing.setName(updatedPart.getName());
-        existing.setSupplier(updatedPart.getSupplier());
-        existing.setVersion(updatedPart.getVersion());
-        existing.setStatus(updatedPart.getStatus());
-
-        Part saved = partRepository.save(existing);
-        return ResponseEntity.ok(saved);
+                    Part saved = partRepository.save(existing);
+                    return ResponseEntity.ok(saved);
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")

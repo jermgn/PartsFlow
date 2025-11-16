@@ -1,0 +1,198 @@
+{
+  "info": {
+    "name": "PartsFlow - Demo Data",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1 - Create Users",
+      "item": [
+        {
+          "name": "Create User - Toyota Europe Manager",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"tme_manager\", \"passwordHash\": \"admin123\", \"email\": \"manager@toyota-europe.com\", \"userRole\": \"ADMIN\"}"
+            },
+            "url": "{{baseUrl}}/api/users"
+          }
+        },
+        {
+          "name": "Create User - Production Engineer",
+          "request": {
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"prod_engineer\", \"passwordHash\": \"prod123\", \"email\": \"prod.engineer@factory-demo.com\", \"userRole\": \"ENGINEER\"}"
+            },
+            "url": "{{baseUrl}}/api/users"
+          }
+        },
+        {
+          "name": "Create User - Quality Expert",
+          "request": {
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"quality_expert\", \"passwordHash\": \"qual123\", \"email\": \"quality.team@factory-demo.com\", \"userRole\": \"QUALITY\"}"
+            },
+            "url": "{{baseUrl}}/api/users"
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "2 - Create Requesters",
+      "item": [
+        {
+          "name": "Requester - Production Engineer",
+          "request": {
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"firstName\": \"Alex\", \"lastName\": \"River\", \"department\": \"Production Engineering\", \"site\": \"Factory North\", \"businessRole\": \"ENGINEER\", \"userId\": 2}"
+            },
+            "url": "{{baseUrl}}/api/requesters"
+          }
+        },
+        {
+          "name": "Requester - Quality Inspector",
+          "request": {
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"firstName\": \"Morgan\", \"lastName\": \"Lane\", \"department\": \"Quality Assurance\", \"site\": \"Factory North\", \"businessRole\": \"QUALITY\", \"userId\": 3}"
+            },
+            "url": "{{baseUrl}}/api/requesters"
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "3 - Create Workshops",
+      "item": [
+        {
+          "name": "Body Shop Workshop",
+          "request": {
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"Body Shop\", \"department\": \"Chassis Assembly\", \"code\": \"BDY01\"}"
+            },
+            "url": "{{baseUrl}}/api/workshops"
+          }
+        },
+        {
+          "name": "Paint Shop Workshop",
+          "request": {
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"Paint Workshop\", \"department\": \"Surface Coating\", \"code\": \"PNT02\"}"
+            },
+            "url": "{{baseUrl}}/api/workshops"
+          }
+        },
+        {
+          "name": "Final Assembly Workshop",
+          "request": {
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"Assembly Line A\", \"department\": \"Final Assembly\", \"code\": \"ASM01\"}"
+            },
+            "url": "{{baseUrl}}/api/workshops"
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "4 - Create Parts",
+      "item": [
+        {
+          "name": "Front Bumper Model A",
+          "request": {
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"reference\": \"P-10001\", \"name\": \"Front Bumper\", \"supplier\": \"AutoMold Corp\", \"version\": \"V1\", \"status\": \"ACTIVE\"}"
+            },
+            "url": "{{baseUrl}}/api/parts"
+          }
+        },
+        {
+          "name": "LED Headlamp Left Model A",
+          "request": {
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"reference\": \"P-20015\", \"name\": \"LED Headlamp LH\", \"supplier\": \"BrightLite Industries\", \"version\": \"V2\", \"status\": \"ACTIVE\"}"
+            },
+            "url": "{{baseUrl}}/api/parts"
+          }
+        },
+        {
+          "name": "Door Structural Reinforcement",
+          "request": {
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"reference\": \"P-30009\", \"name\": \"Door Reinforcement\", \"supplier\": \"MetalWorks Ltd\", \"version\": \"V3\", \"status\": \"ACTIVE\"}"
+            },
+            "url": "{{baseUrl}}/api/parts"
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "5 - Create Modification Requests",
+      "item": [
+        {
+          "name": "MR - Headlamp Moisture Issue",
+          "request": {
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"partId\": 2, \"requesterId\": 2, \"workshopId\": 2, \"comment\": \"Moisture observed during routine inspection. Requires design verification.\"}"
+            },
+            "url": "{{baseUrl}}/api/requests"
+          }
+        },
+        {
+          "name": "MR - Bumper Clip Fitment Enhancement",
+          "request": {
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"partId\": 1, \"requesterId\": 2, \"workshopId\": 1, \"comment\": \"Assembly team reports clip deformation. Suggest improving clip geometry.\"}"
+            },
+            "url": "{{baseUrl}}/api/requests"
+          }
+        },
+        {
+          "name": "MR - Door Reinforcement Integrity Check",
+          "request": {
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"partId\": 3, \"requesterId\": 1, \"workshopId\": 3, \"comment\": \"Stress tests indicate potential cracking. Requires urgent analysis.\"}"
+            },
+            "url": "{{baseUrl}}/api/requests"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    }
+  ]
+}
