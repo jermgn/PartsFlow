@@ -11,10 +11,10 @@
           "name": "Create User - Toyota Europe Manager",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\"username\": \"tme_manager\", \"passwordHash\": \"admin123\", \"email\": \"manager@toyota-europe.com\", \"userRole\": \"ADMIN\"}"
+              "raw": "{\"username\":\"tme_manager\",\"passwordHash\":\"admin123\",\"email\":\"manager@toyota-europe.com\",\"userRole\":\"ADMIN\"}"
             },
             "url": "{{baseUrl}}/api/users"
           }
@@ -23,9 +23,10 @@
           "name": "Create User - Production Engineer",
           "request": {
             "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\"username\": \"prod_engineer\", \"passwordHash\": \"prod123\", \"email\": \"prod.engineer@factory-demo.com\", \"userRole\": \"ENGINEER\"}"
+              "raw": "{\"username\":\"prod_engineer\",\"passwordHash\":\"prod123\",\"email\":\"prod.engineer@factory-demo.com\",\"userRole\":\"ENGINEER\"}"
             },
             "url": "{{baseUrl}}/api/users"
           }
@@ -34,9 +35,10 @@
           "name": "Create User - Quality Expert",
           "request": {
             "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\"username\": \"quality_expert\", \"passwordHash\": \"qual123\", \"email\": \"quality.team@factory-demo.com\", \"userRole\": \"QUALITY\"}"
+              "raw": "{\"username\":\"quality_expert\",\"passwordHash\":\"qual123\",\"email\":\"quality.team@factory-demo.com\",\"userRole\":\"QUALITY\"}"
             },
             "url": "{{baseUrl}}/api/users"
           }
@@ -51,9 +53,10 @@
           "name": "Requester - Production Engineer",
           "request": {
             "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\"firstName\": \"Alex\", \"lastName\": \"River\", \"department\": \"Production Engineering\", \"site\": \"Factory North\", \"businessRole\": \"ENGINEER\", \"userId\": 2}"
+              "raw": "{\"firstName\":\"Alex\",\"lastName\":\"River\",\"department\":\"Production Engineering\",\"site\":\"Factory North\",\"businessRole\":\"ENGINEER\",\"userId\":2}"
             },
             "url": "{{baseUrl}}/api/requesters"
           }
@@ -62,9 +65,10 @@
           "name": "Requester - Quality Inspector",
           "request": {
             "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\"firstName\": \"Morgan\", \"lastName\": \"Lane\", \"department\": \"Quality Assurance\", \"site\": \"Factory North\", \"businessRole\": \"QUALITY\", \"userId\": 3}"
+              "raw": "{\"firstName\":\"Morgan\",\"lastName\":\"Lane\",\"department\":\"Quality Assurance\",\"site\":\"Factory North\",\"businessRole\":\"QUALITY\",\"userId\":3}"
             },
             "url": "{{baseUrl}}/api/requesters"
           }
@@ -79,9 +83,10 @@
           "name": "Body Shop Workshop",
           "request": {
             "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\"name\": \"Body Shop\", \"department\": \"Chassis Assembly\", \"code\": \"BDY01\"}"
+              "raw": "{\"name\":\"Body Shop\",\"department\":\"Chassis Assembly\",\"code\":\"BDY01\"}"
             },
             "url": "{{baseUrl}}/api/workshops"
           }
@@ -90,9 +95,10 @@
           "name": "Paint Shop Workshop",
           "request": {
             "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\"name\": \"Paint Workshop\", \"department\": \"Surface Coating\", \"code\": \"PNT02\"}"
+              "raw": "{\"name\":\"Paint Workshop\",\"department\":\"Surface Coating\",\"code\":\"PNT02\"}"
             },
             "url": "{{baseUrl}}/api/workshops"
           }
@@ -101,9 +107,10 @@
           "name": "Final Assembly Workshop",
           "request": {
             "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\"name\": \"Assembly Line A\", \"department\": \"Final Assembly\", \"code\": \"ASM01\"}"
+              "raw": "{\"name\":\"Assembly Line A\",\"department\":\"Final Assembly\",\"code\":\"ASM01\"}"
             },
             "url": "{{baseUrl}}/api/workshops"
           }
@@ -118,9 +125,10 @@
           "name": "Front Bumper Model A",
           "request": {
             "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\"reference\": \"P-10001\", \"name\": \"Front Bumper\", \"supplier\": \"AutoMold Corp\", \"version\": \"V1\", \"status\": \"ACTIVE\"}"
+              "raw": "{\"reference\":\"P-10001\",\"name\":\"Front Bumper\",\"supplier\":\"AutoMold Corp\",\"version\":\"V1\",\"status\":\"ACTIVE\"}"
             },
             "url": "{{baseUrl}}/api/parts"
           }
@@ -129,9 +137,10 @@
           "name": "LED Headlamp Left Model A",
           "request": {
             "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\"reference\": \"P-20015\", \"name\": \"LED Headlamp LH\", \"supplier\": \"BrightLite Industries\", \"version\": \"V2\", \"status\": \"ACTIVE\"}"
+              "raw": "{\"reference\":\"P-20015\",\"name\":\"LED Headlamp LH\",\"supplier\":\"BrightLite Industries\",\"version\":\"V2\",\"status\":\"ACTIVE\"}"
             },
             "url": "{{baseUrl}}/api/parts"
           }
@@ -140,9 +149,10 @@
           "name": "Door Structural Reinforcement",
           "request": {
             "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\"reference\": \"P-30009\", \"name\": \"Door Reinforcement\", \"supplier\": \"MetalWorks Ltd\", \"version\": \"V3\", \"status\": \"ACTIVE\"}"
+              "raw": "{\"reference\":\"P-30009\",\"name\":\"Door Reinforcement\",\"supplier\":\"MetalWorks Ltd\",\"version\":\"V3\",\"status\":\"ACTIVE\"}"
             },
             "url": "{{baseUrl}}/api/parts"
           }
@@ -157,9 +167,10 @@
           "name": "MR - Headlamp Moisture Issue",
           "request": {
             "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\"partId\": 2, \"requesterId\": 2, \"workshopId\": 2, \"comment\": \"Moisture observed during routine inspection. Requires design verification.\"}"
+              "raw": "{\"partId\":2,\"requesterId\":2,\"workshopId\":2,\"comment\":\"Moisture observed during inspection. Needs design verification.\"}"
             },
             "url": "{{baseUrl}}/api/requests"
           }
@@ -168,31 +179,60 @@
           "name": "MR - Bumper Clip Fitment Enhancement",
           "request": {
             "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\"partId\": 1, \"requesterId\": 2, \"workshopId\": 1, \"comment\": \"Assembly team reports clip deformation. Suggest improving clip geometry.\"}"
+              "raw": "{\"partId\":1,\"requesterId\":2,\"workshopId\":1,\"comment\":\"Assembly team reports clip deformation. Propose improved geometry.\"}"
             },
             "url": "{{baseUrl}}/api/requests"
           }
         },
         {
-          "name": "MR - Door Reinforcement Integrity Check",
+          "name": "MR - Door Reinforcement Integrity Risk",
           "request": {
             "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\"partId\": 3, \"requesterId\": 1, \"workshopId\": 3, \"comment\": \"Stress tests indicate potential cracking. Requires urgent analysis.\"}"
+              "raw": "{\"partId\":3,\"requesterId\":1,\"workshopId\":3,\"comment\":\"Stress testing shows potential cracking. Requires urgent analysis.\"}"
             },
             "url": "{{baseUrl}}/api/requests"
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "6 - Create Approval Steps",
+      "item": [
+        {
+          "name": "Approve MR #1 by Manager",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"requestId\":1,\"approvedByUserId\":1,\"status\":\"APPROVED\",\"comment\":\"Reviewed and validated after engineering analysis.\"}"
+            },
+            "url": "{{baseUrl}}/api/approvals"
+          }
+        },
+        {
+          "name": "Reject MR #2 by Manager",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"requestId\":2,\"approvedByUserId\":1,\"status\":\"REJECTED\",\"comment\":\"Insufficient data. Please provide supplier report.\"}"
+            },
+            "url": "{{baseUrl}}/api/approvals"
           }
         }
       ]
     }
   ],
   "variable": [
-    {
-      "key": "baseUrl",
-      "value": "http://localhost:8080"
-    }
+    { "key": "baseUrl", "value": "http://localhost:8080" }
   ]
 }
