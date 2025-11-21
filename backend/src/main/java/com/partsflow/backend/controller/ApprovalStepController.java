@@ -1,5 +1,6 @@
 package com.partsflow.backend.controller;
 
+import com.partsflow.backend.dto.approval.*;
 import com.partsflow.backend.model.*;
 import com.partsflow.backend.repository.*;
 import org.springframework.http.ResponseEntity;
@@ -13,63 +14,85 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class ApprovalStepController {
 
-    private final ApprovalStepRepository approvalRepo;
-    private final ModificationRequestRepository requestRepo;
-    private final UserRepository userRepo;
+    private final ApprovalStepRepository approvalStepRepository;
+    private final ModificationRequestRepository modificationRequestRepository;
+    private final UserRepository userRepository;
 
     public ApprovalStepController(
-            ApprovalStepRepository approvalRepo,
-            ModificationRequestRepository requestRepo,
-            UserRepository userRepo
+            ApprovalStepRepository approvalStepRepository,
+            ModificationRequestRepository modificationRequestRepository,
+            UserRepository userRepository
     ) {
-        this.approvalRepo = approvalRepo;
-        this.requestRepo = requestRepo;
-        this.userRepo = userRepo;
+        this.approvalStepRepository = approvalStepRepository;
+        this.modificationRequestRepository = modificationRequestRepository;
+        this.userRepository = userRepository;
     }
 
-    public record ApprovalCreateDTO(
-            Long requestId,
-            Long approvedByUserId,
-            ApprovalStatus status,
-            String comment
-    ) {}
+    @GetMapping("/request/{requestId}")
+    public List<ApprovalStepResponseDTO> getByRequest(@PathVariable Long requestId) {
+        return approvalStepRepository.findByModificationRequestId(requestId)
+                .stream()
+                .map(step -> new ApprovalStepResponseDTO(
+                        step.getId(),
+                        step.getModificationRequest().getId(),
+                        step.getApprover().getId(),
+                        step.getApproverRole(),
+                        step.getStatus(),
+                        step.getComment(),
+                        step.getValidatedAt()
+                ))
+                .toList();
+    }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody ApprovalCreateDTO dto) {
+    public ResponseEntity<?> create(@RequestBody ApprovalStepCreateDTO dto) {
 
-        ModificationRequest request = requestRepo.findById(dto.requestId())
+        var request = modificationRequestRepository.findById(dto.modificationRequestId())
                 .orElse(null);
-        if (request == null)
-            return ResponseEntity.badRequest().body("Request not found");
 
-        User user = userRepo.findById(dto.approvedByUserId())
-                .orElse(null);
-        if (user == null)
-            return ResponseEntity.badRequest().body("User approving not found");
-
-        ApprovalStep step = ApprovalStep.builder()
-                .request(request)
-                .approvedBy(user)
-                .status(dto.status())
-                .comment(dto.comment())
-                .build();
-
-        if (dto.status() == ApprovalStatus.APPROVED) {
-            request.setStatus(RequestStatus.VALIDATED);
-        } else if (dto.status() == ApprovalStatus.REJECTED) {
-            request.setStatus(RequestStatus.REJECTED);
+        if (request == null) {
+            return ResponseEntity.badRequest().body("Modification Request not found");
         }
 
-        requestRepo.save(request);
+        var approver = userRepository.findById(dto.approverId())
+                .orElse(null);
 
-        ApprovalStep saved = approvalRepo.save(step);
+        if (approver == null) {
+            return ResponseEntity.badRequest().body("Approver not found");
+        }
 
-        return ResponseEntity.created(URI.create("/api/approvals/" + saved.getId()))
-                .body(saved);
+        ApprovalStep step = ApprovalStep.builder()
+                .modificationRequest(request)
+                .approver(approver)
+                .approverRole(dto.approverRole())
+                .status(ApprovalStatus.PENDING)
+                .build();
+
+        ApprovalStep saved = approvalStepRepository.save(step);
+
+        return ResponseEntity.created(
+                URI.create("/api/approvals/" + saved.getId())
+        ).body(saved);
     }
 
-    @GetMapping("/request/{id}")
-    public List<ApprovalStep> getApprovalsForRequest(@PathVariable Long id) {
-        return approvalRepo.findByRequestId(id);
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ApprovalStepUpdateDTO dto) {
+
+        return approvalStepRepository.findById(id)
+                .map(existing -> {
+
+                    if (dto.status() != null) {
+                        existing.setStatus(dto.status());
+                    }
+
+                    if (dto.comment() != null) {
+                        existing.setComment(dto.comment());
+                    }
+
+                    ApprovalStep saved = approvalStepRepository.save(existing);
+
+                    return ResponseEntity.ok(saved);
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 }

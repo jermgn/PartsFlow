@@ -1,5 +1,8 @@
 package com.partsflow.backend.controller;
 
+import com.partsflow.backend.dto.workshop.WorkshopCreateDTO;
+import com.partsflow.backend.dto.workshop.WorkshopResponseDTO;
+import com.partsflow.backend.dto.workshop.WorkshopUpdateDTO;
 import com.partsflow.backend.model.Workshop;
 import com.partsflow.backend.repository.WorkshopRepository;
 import org.springframework.http.ResponseEntity;
@@ -19,39 +22,41 @@ public class WorkshopController {
         this.workshopRepository = workshopRepository;
     }
 
-    public record WorkshopCreateDTO(
-            String name,
-            String department,
-            String code
-    ) {}
-
-    public record WorkshopUpdateDTO(
-            String name,
-            String department,
-            String code
-    ) {}
-
     @GetMapping
-    public List<Workshop> getAll() {
-        return workshopRepository.findAll();
+    public List<WorkshopResponseDTO> getAll() {
+        return workshopRepository.findAll().stream()
+                .map(w -> new WorkshopResponseDTO(
+                        w.getId(),
+                        w.getName(),
+                        w.getDepartment(),
+                        w.getCode()
+                ))
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Workshop> getById(@PathVariable Long id) {
+    public ResponseEntity<WorkshopResponseDTO> getById(@PathVariable Long id) {
         return workshopRepository.findById(id)
-                .map(ResponseEntity::ok)
+                .map(w -> ResponseEntity.ok(
+                        new WorkshopResponseDTO(
+                                w.getId(),
+                                w.getName(),
+                                w.getDepartment(),
+                                w.getCode()
+                        )
+                ))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody WorkshopCreateDTO dto) {
 
-        if (dto.name() == null || dto.name().isBlank()) {
-            return ResponseEntity.badRequest().body("Name is required");
+        if (dto.code() == null || dto.code().isBlank()) {
+            return ResponseEntity.badRequest().body("Code is required");
         }
 
-        if (workshopRepository.existsByName(dto.name())) {
-            return ResponseEntity.badRequest().body("Workshop name already exists");
+        if (workshopRepository.existsByCode(dto.code())) {
+            return ResponseEntity.badRequest().body("Workshop code already exists");
         }
 
         Workshop workshop = Workshop.builder()
@@ -63,29 +68,48 @@ public class WorkshopController {
         Workshop saved = workshopRepository.save(workshop);
 
         return ResponseEntity.created(URI.create("/api/workshops/" + saved.getId()))
-                .body(saved);
+                .body(new WorkshopResponseDTO(
+                        saved.getId(),
+                        saved.getName(),
+                        saved.getDepartment(),
+                        saved.getCode()
+                ));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody WorkshopUpdateDTO dto) {
+
         return workshopRepository.findById(id)
                 .map(existing -> {
-                    existing.setName(dto.name());
-                    existing.setDepartment(dto.department());
-                    existing.setCode(dto.code());
+
+                    if (dto.name() != null) existing.setName(dto.name());
+                    if (dto.department() != null) existing.setDepartment(dto.department());
+                    if (dto.code() != null) existing.setCode(dto.code());
+
                     Workshop saved = workshopRepository.save(existing);
-                    return ResponseEntity.ok(saved);
+
+                    return ResponseEntity.ok(
+                            new WorkshopResponseDTO(
+                                    saved.getId(),
+                                    saved.getName(),
+                                    saved.getDepartment(),
+                                    saved.getCode()
+                            )
+                    );
+
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
+
         if (!workshopRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
 
         workshopRepository.deleteById(id);
+
         return ResponseEntity.noContent().build();
     }
 }

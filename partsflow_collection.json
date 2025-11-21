@@ -212,7 +212,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\"requestId\":1,\"approvedByUserId\":1,\"status\":\"APPROVED\",\"comment\":\"Reviewed and validated after engineering analysis.\"}"
+              "raw": "{\"modificationRequestId\":1,\"approverId\":1,\"status\":\"APPROVED\",\"approverRole\":\"ADMIN\",\"comment\":\"Reviewed and validated after engineering analysis.\"}"
             },
             "url": "{{baseUrl}}/api/approvals"
           }
@@ -224,7 +224,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\"requestId\":2,\"approvedByUserId\":1,\"status\":\"REJECTED\",\"comment\":\"Insufficient data. Please provide supplier report.\"}"
+              "raw": "{\"modificationRequestId\":2,\"approverId\":1,\"status\":\"REJECTED\",\"approverRole\":\"ADMIN\",\"comment\":\"Insufficient data. Please provide supplier report.\"}"
             },
             "url": "{{baseUrl}}/api/approvals"
           }

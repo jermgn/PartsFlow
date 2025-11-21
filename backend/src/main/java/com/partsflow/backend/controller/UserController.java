@@ -1,8 +1,11 @@
 package com.partsflow.backend.controller;
 
+import com.partsflow.backend.dto.user.UserCreateDTO;
+import com.partsflow.backend.dto.user.UserResponseDTO;
+import com.partsflow.backend.dto.user.UserUpdateDTO;
 import com.partsflow.backend.model.User;
-import com.partsflow.backend.model.UserRole;
 import com.partsflow.backend.repository.UserRepository;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,29 +23,29 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    // DTO intégrés ici
-    public record UserCreateDTO(
-            String username,
-            String passwordHash,
-            String email,
-            UserRole userRole
-    ) {}
-
-    public record UserUpdateDTO(
-            String username,
-            String email,
-            UserRole userRole,
-            Boolean enabled
-    ) {}
-
     @GetMapping
-    public List<User> getAll() {
-        return userRepository.findAll();
+    public List<UserResponseDTO> getAll() {
+        return userRepository.findAll().stream()
+                .map(user -> new UserResponseDTO(
+                        user.getId(),
+                        user.getUsername(),
+                        user.getEmail(),
+                        user.getUserRole(),
+                        user.isEnabled()
+                ))
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getById(@PathVariable Long id) {
+    public ResponseEntity<UserResponseDTO> getById(@PathVariable Long id) {
         return userRepository.findById(id)
+                .map(user -> new UserResponseDTO(
+                        user.getId(),
+                        user.getUsername(),
+                        user.getEmail(),
+                        user.getUserRole(),
+                        user.isEnabled()
+                ))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -62,9 +65,13 @@ public class UserController {
             return ResponseEntity.badRequest().body("Email already exists");
         }
 
+        if (dto.userRole() == null) {
+            return ResponseEntity.badRequest().body("User role is required");
+        }
+
         User user = User.builder()
                 .username(dto.username())
-                .passwordHash(dto.passwordHash()) // pas de hashing pour MVP
+                .passwordHash(dto.passwordHash())
                 .email(dto.email())
                 .userRole(dto.userRole())
                 .enabled(true)
@@ -73,7 +80,13 @@ public class UserController {
         User saved = userRepository.save(user);
 
         return ResponseEntity.created(URI.create("/api/users/" + saved.getId()))
-                .body(saved);
+                .body(new UserResponseDTO(
+                        saved.getId(),
+                        saved.getUsername(),
+                        saved.getEmail(),
+                        saved.getUserRole(),
+                        saved.isEnabled()
+                ));
     }
 
     @PutMapping("/{id}")
@@ -99,7 +112,14 @@ public class UserController {
                     }
 
                     User saved = userRepository.save(existing);
-                    return ResponseEntity.ok(saved);
+
+                    return ResponseEntity.ok(new UserResponseDTO(
+                            saved.getId(),
+                            saved.getUsername(),
+                            saved.getEmail(),
+                            saved.getUserRole(),
+                            saved.isEnabled()
+                    ));
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -112,7 +132,6 @@ public class UserController {
         }
 
         userRepository.deleteById(id);
-
         return ResponseEntity.noContent().build();
     }
 }

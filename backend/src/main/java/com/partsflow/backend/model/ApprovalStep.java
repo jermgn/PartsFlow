@@ -2,6 +2,7 @@ package com.partsflow.backend.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -16,25 +17,36 @@ public class ApprovalStep {
     private Long id;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "request_id", nullable = false)
-    private ModificationRequest request;
+    @JoinColumn(name = "modification_request_id")
+    private ModificationRequest modificationRequest;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "approved_by", nullable = false)
-    private User approvedBy;
+    @JoinColumn(name = "approver_id")
+    private User approver;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ApprovalStatus status;
 
-    @Column(length = 500)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserRole approverRole;
+
     private String comment;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime timestamp;
+    private LocalDateTime validatedAt;
 
     @PrePersist
     protected void onCreate() {
-        timestamp = LocalDateTime.now();
+        if (status == ApprovalStatus.APPROVED || status == ApprovalStatus.REJECTED) {
+            validatedAt = LocalDateTime.now();
+        }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        if (status == ApprovalStatus.APPROVED || status == ApprovalStatus.REJECTED) {
+            validatedAt = LocalDateTime.now();
+        }
     }
 }

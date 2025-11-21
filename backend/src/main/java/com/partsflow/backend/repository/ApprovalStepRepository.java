@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ApprovalStepRepository extends JpaRepository<ApprovalStep, Long> {
 
-    List<ApprovalStep> findByRequestId(Long requestId);
+    List<ApprovalStep> findByModificationRequestId(Long requestId);
 }

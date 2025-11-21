@@ -1,7 +1,10 @@
 package com.partsflow.backend.controller;
 
+import com.partsflow.backend.dto.part.*;
 import com.partsflow.backend.model.Part;
+import com.partsflow.backend.model.PartStatus;
 import com.partsflow.backend.repository.PartRepository;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,54 +23,98 @@ public class PartController {
     }
 
     @GetMapping
-    public List<Part> getAll() {
-        return partRepository.findAll();
+    public List<PartResponseDTO> getAll() {
+        return partRepository.findAll().stream()
+                .map(p -> new PartResponseDTO(
+                        p.getId(),
+                        p.getReference(),
+                        p.getName(),
+                        p.getSupplier(),
+                        p.getVersion(),
+                        p.getStatus()
+                ))
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Part> getById(@PathVariable Long id) {
+    public ResponseEntity<PartResponseDTO> getById(@PathVariable Long id) {
         return partRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @GetMapping("/reference/{reference}")
-    public ResponseEntity<Part> getByReference(@PathVariable String reference) {
-        return partRepository.findByReference(reference)
+                .map(p -> new PartResponseDTO(
+                        p.getId(),
+                        p.getReference(),
+                        p.getName(),
+                        p.getSupplier(),
+                        p.getVersion(),
+                        p.getStatus()
+                ))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody Part incoming) {
+    public ResponseEntity<?> create(@RequestBody PartCreateDTO dto) {
 
-        if (partRepository.existsByReference(incoming.getReference())) {
-            return ResponseEntity.badRequest().body("Reference already exists");
+        if (dto.reference() == null || dto.reference().isBlank()) {
+            return ResponseEntity.badRequest().body("Reference is required");
         }
 
-        Part saved = partRepository.save(incoming);
-        URI location = URI.create("/api/parts/" + saved.getId());
-        return ResponseEntity.created(location).body(saved);
+        if (partRepository.existsByReference(dto.reference())) {
+            return ResponseEntity.badRequest().body("Part reference already exists");
+        }
+
+        Part part = Part.builder()
+                .reference(dto.reference())
+                .name(dto.name())
+                .supplier(dto.supplier())
+                .version(dto.version())
+                .status(PartStatus.ACTIVE)
+                .build();
+
+        Part saved = partRepository.save(part);
+
+        return ResponseEntity.created(URI.create("/api/parts/" + saved.getId()))
+                .body(new PartResponseDTO(
+                        saved.getId(),
+                        saved.getReference(),
+                        saved.getName(),
+                        saved.getSupplier(),
+                        saved.getVersion(),
+                        saved.getStatus()
+                ));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Part update) {
+    public ResponseEntity<?> update(
+            @PathVariable Long id,
+            @RequestBody PartUpdateDTO dto
+    ) {
+
         return partRepository.findById(id)
                 .map(existing -> {
 
-                    existing.setName(update.getName());
-                    existing.setSupplier(update.getSupplier());
-                    existing.setVersion(update.getVersion());
-                    existing.setStatus(update.getStatus());
+                    if (dto.name() != null) existing.setName(dto.name());
+                    if (dto.supplier() != null) existing.setSupplier(dto.supplier());
+                    if (dto.version() != null) existing.setVersion(dto.version());
+                    if (dto.status() != null) existing.setStatus(dto.status());
 
                     Part saved = partRepository.save(existing);
-                    return ResponseEntity.ok(saved);
+
+                    return ResponseEntity.ok(
+                            new PartResponseDTO(
+                                    saved.getId(),
+                                    saved.getReference(),
+                                    saved.getName(),
+                                    saved.getSupplier(),
+                                    saved.getVersion(),
+                                    saved.getStatus()
+                            )
+                    );
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         if (!partRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
