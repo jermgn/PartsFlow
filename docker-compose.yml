@@ -10,9 +10,9 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - partsflow_db_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
     networks:
-      - partsflow-network
+      - network
 
   backend:
     build: ./backend
@@ -28,7 +28,7 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - partsflow-network
+      - network
 
   frontend:
     build: ./frontend
@@ -38,10 +38,10 @@ services:
     ports:
       - "3000:80"
     networks:
-      - partsflow-network
+      - network
 
 networks:
-  partsflow-network:
+  network:
 
 volumes:
-  partsflow_db_data:
+  db_data:
