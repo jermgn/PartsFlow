@@ -1,6 +1,6 @@
 # 📘 **README – PartsFlow (Backend + PostgreSQL)**
 
-## 🚗 Overview
+## 🚗 Présentation
 
 **PartsFlow** est un MVP développé pour gérer les pièces, leurs modifications et les interactions entre les différents acteurs d’un environnement industriel.  
 L’objectif est d’offrir une base technique fiable avec une architecture **Java / Spring Boot**, **PostgreSQL**, et une orchestration via **Docker Compose**.
@@ -16,11 +16,11 @@ Le frontend n’étant pas finalisé, ce repo se concentre sur une base backend 
 
 ---
 
-# 🐳 **Launch the application with Docker**
+# 🐳 **Lancer l’application avec Docker**
 
 Assurez-vous d'avoir **Docker** et **Docker Compose** installés.
 
-### 👉 1. Build and start the containers
+### 1. Construire et démarrer les conteneurs
 
 ```bash
 docker compose up --build
@@ -35,7 +35,7 @@ Les services suivants seront lancés :
 
 Les logs du backend apparaîtront dans votre terminal.
 
-### 👉 2. Verify that everything is running
+### 2. Vérifier que tout fonctionne
 
 ```bash
 docker ps
@@ -48,7 +48,7 @@ Vous devriez voir :
 
 ---
 
-# 📡 **API Base URL**
+# 📡 **URL de base de l’API**
 
 ```
 http://localhost:8080/api
@@ -60,7 +60,7 @@ http://localhost:8080/api
 
 ---
 
-# 🗂️ **Project Structure**
+# 🗂️ **Structure du projet**
 
 ```text
 backend/
@@ -76,7 +76,7 @@ partsflow_collection.json
 
 ---
 
-# 🧰 **Technologies**
+# 🧰 **Technologies utilisées**
 
 - **Java 17**
 - **Spring Boot 3**
@@ -95,7 +95,7 @@ Le frontend React/TypeScript n'étant pas suffisamment avancé pour une démonst
 
 ---
 
-# 🎯 **Goal of the MVP**
+# 🎯 **Objectif du MVP**
 
 Ce projet a été développé pour :
 
@@ -105,8 +105,6 @@ Ce projet a été développé pour :
 - présenter une base technique extensible (API REST complète, modèles métier, sécurité).
 
 ---
-
-# 📛 Badges
 
 ![Java](https://img.shields.io/badge/Java_17-007396?logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?logo=springboot&logoColor=white)
