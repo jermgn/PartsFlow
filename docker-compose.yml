@@ -30,16 +30,6 @@ services:
     networks:
       - network
 
-  frontend:
-    build: ./frontend
-    container_name: partsflow-frontend
-    depends_on:
-      - backend
-    ports:
-      - "3000:80"
-    networks:
-      - network
-
 networks:
   network:
 
